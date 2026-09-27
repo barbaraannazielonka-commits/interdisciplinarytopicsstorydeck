@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Story Deck — Seven Images, One Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4efe3; --bg2:#ffffff; --paper:#1c2230; --gold:#a9761f;
+  --rose:#a5423d; --muted:#6b6255; --border:#ddd3bc;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14181f; --bg2:#1c2230; --paper:#f2ece0; --gold:#d3a24a;
+    --rose:#c15b56; --muted:#8891a3; --border:#2c3446;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14181f; --bg2:#1c2230; --paper:#f2ece0; --gold:#d3a24a;
+  --rose:#c15b56; --muted:#8891a3; --border:#2c3446;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--bg); color:var(--paper);
+  font-family:-apple-system,Segoe UI,Roboto,sans-serif;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  transition:background .3s,color .3s;
+  min-height:100%;
+}
+h1,h2,.deck-num,.big-count{font-family:'Fraunces',serif;}
+button{font-family:inherit;cursor:pointer;}
+.wrap{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 3rem;}
+
+/* HOME */
+.home-head{text-align:center;margin-bottom:2.2rem;}
+.home-head h1{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:900;margin:0 0 .4rem;letter-spacing:-.01em;}
+.home-head p{color:var(--muted);font-size:1.05rem;margin:0;}
+.deck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;}
+.deck-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:1.1rem 1.1rem 1rem;text-align:left;color:var(--paper);
+  transition:transform .15s,border-color .15s;
+}
+.deck-card:hover,.deck-card:focus-visible{transform:translateY(-3px);border-color:var(--gold);outline:none;}
+.deck-num{font-size:1.7rem;font-weight:700;color:var(--gold);line-height:1;}
+.deck-theme{margin:.35rem 0 0;font-size:.95rem;opacity:.85;}
+.deck-count{margin:.5rem 0 0;font-size:.78rem;color:var(--muted);}
+.cat-tag{display:inline-block;font-size:.72rem;padding:.15rem .55rem;border-radius:20px;margin-top:.55rem;color:#fff;}
+.filter-row{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;margin-bottom:1.8rem;}
+.filter-btn{
+  background:transparent;border:1px solid var(--border);color:var(--paper);
+  padding:.45rem .95rem;border-radius:20px;font-size:.85rem;opacity:.75;
+}
+.filter-btn.active{opacity:1;border-color:currentColor;font-weight:600;}
+
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:4vh 1.2rem;z-index:20;overflow-y:auto;
+}
+.modal-box{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  max-width:760px;width:100%;padding:2rem 2rem 2.2rem;color:var(--paper);
+  text-align:left;
+}
+.modal-box h2{margin:0 0 .3rem;font-size:1.6rem;}
+.modal-box .lead{color:var(--muted);font-size:.95rem;margin:0 0 1.4rem;line-height:1.5;}
+.modal-close{float:right;background:transparent;border:1px solid var(--border);color:var(--paper);border-radius:7px;padding:.35rem .7rem;font-size:.85rem;}
+.topic-block{border-left:4px solid var(--c);padding-left:1rem;margin-bottom:1.3rem;}
+.topic-block h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--c);}
+.topic-block ul{margin:0;padding-left:1.1rem;font-size:.92rem;line-height:1.6;}
+.note-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-size:.9rem;line-height:1.6;color:var(--muted);margin:1.4rem 0;}
+.eng-table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0 1.4rem;}
+.eng-table th,.eng-table td{border:1px solid var(--border);padding:.55rem .7rem;text-align:left;vertical-align:top;}
+.eng-table th{color:var(--muted);font-weight:600;}
+.modal-box .overlap-note{font-size:.92rem;line-height:1.6;}
+
+/* DISPLAY */
+.topbar{
+  display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;
+  padding:.9rem 1.2rem;border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:var(--bg);z-index:5;
+}
+.topbar .spacer{flex:1;}
+.tbtn{
+  background:transparent;border:1px solid var(--border);color:var(--paper);
+  padding:.5rem .8rem;border-radius:7px;font-size:.9rem;
+}
+.tbtn:hover{border-color:var(--gold);}
+.tbtn.primary{background:var(--rose);border-color:var(--rose);color:#fff;}
+.deck-label{font-weight:700;font-size:1.05rem;white-space:nowrap;}
+.timer-box{display:flex;align-items:center;gap:.4rem;}
+.timer-display{font-family:'Fraunces',serif;font-weight:700;font-size:1.15rem;min-width:3.4em;text-align:center;}
+.timer-display.done{color:var(--rose);}
+
+.stage{padding:2.2rem 1.5rem 1rem;text-align:center;}
+.prompt{color:var(--muted);font-size:1.05rem;margin:0 0 1.8rem;}
+.img-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:1.4rem;max-width:1000px;margin:0 auto;
+}
+.img-tile{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+  font-size:min(11vw,5.5rem);
+}
+.nav-row{display:flex;justify-content:center;gap:1rem;margin:2.2rem 0 .5rem;}
+.hidden{display:none !important;}
+@media(max-width:600px){.deck-label{font-size:.95rem;}.tbtn{padding:.45rem .6rem;font-size:.82rem;}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+const CATS = {
+  health: {label:"Health & Life Skills", color:"#c15b56"},
+  democracy: {label:"Democracy & Citizenship", color:"#4f7cac"},
+  sustainability: {label:"Sustainability", color:"#5c8a52"},
+};
+const SETS = [
+ {theme:"Mental Wellness", cat:"health", items:["🧠","💬","😊","😔","🛌","📵","🤝","🧘"]},
+ {theme:"Nutrition & Movement", cat:"health", items:["🥦","🍎","🏃","🚴","💧","⚖️","🍔","🥗"]},
+ {theme:"Emergency Response", cat:"health", items:["🚑","🩹","📞","🔥","🧯","🏥","🆘","👨‍⚕️"]},
+ {theme:"Money & Independence", cat:"health", items:["💵","🏦","🧾","💳","📊","🏠","🎓","🛒"]},
+ {theme:"Sleep, Screens & Balance", cat:"health", items:["📱","😴","⏰","💻","🌙","🎮","📖","☕"]},
+ {theme:"Elections & Voting", cat:"democracy", items:["🗳️","📝","🏛️","🎤","📰","🤝","👥","📮"]},
+ {theme:"Free Press & Speech", cat:"democracy", items:["📰","🎙️","📢","✊","💬","🕊️","📸","📻"]},
+ {theme:"Justice & Rule of Law", cat:"democracy", items:["⚖️","👨‍⚖️","📜","🚔","🏛️","🔒","🤝","🕵️"]},
+ {theme:"Community & Activism", cat:"democracy", items:["📣","🪧","👥","🤝","🏘️","📋","🕯️","🎗️"]},
+ {theme:"Immigration & Belonging", cat:"democracy", items:["🛂","🌍","🧳","🤝","🏳️","📄","🏠","✈️"]},
+ {theme:"Climate Change", cat:"sustainability", items:["🌡️","🌪️","🧊","🏭","🌊","☀️","🌳","🔥"]},
+ {theme:"Waste & Recycling", cat:"sustainability", items:["♻️","🗑️","🛍️","📦","🧴","🌱","🏭","🥤"]},
+ {theme:"Renewable Energy", cat:"sustainability", items:["☀️","💨","🔋","💡","🏭","🚗","🌍","🌊"]},
+ {theme:"Water & Resources", cat:"sustainability", items:["💧","🚰","🌾","🏜️","🐟","🚿","🌍","🌧️"]},
+ {theme:"Biodiversity", cat:"sustainability", items:["🐝","🌳","🐋","🦋","🔥","🌍","🐼","🦁"]},
+];
+let activeCat = "all";
+let showInfo = false;
+function toggleInfo(v){ showInfo = v; render(); }
+
+let current = null; // index or null = home
+let timerSecs = 300, timerLeft = 300, timerRunning = false, timerHandle = null;
+
+function getTheme(){ try{return localStorage.getItem('sd-theme')||'';}catch(e){return '';} }
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  try{localStorage.setItem('sd-theme', t);}catch(e){}
+}
+function toggleTheme(){
+  const isLight = document.documentElement.getAttribute('data-theme')==='light';
+  setTheme(isLight ? 'dark' : 'light');
+  render();
+}
+(function initTheme(){
+  const t = getTheme();
+  if(t==='light') document.documentElement.setAttribute('data-theme','light');
+  else if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+})();
+
+function fmtTime(s){
+  const m = Math.floor(s/60), sec = s%60;
+  return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+}
+function startPauseTimer(){
+  if(timerRunning){
+    clearInterval(timerHandle); timerRunning=false;
+  } else {
+    if(timerLeft<=0) timerLeft = timerSecs;
+    timerRunning = true;
+    timerHandle = setInterval(()=>{
+      timerLeft--;
+      const d = document.getElementById('timerDisplay');
+      if(d){ d.textContent = fmtTime(Math.max(timerLeft,0)); d.classList.toggle('done', timerLeft<=0); }
+      if(timerLeft<=0){ clearInterval(timerHandle); timerRunning=false; renderTopbarBtns(); }
+    },1000);
+  }
+  renderTopbarBtns();
+}
+function resetTimer(){
+  clearInterval(timerHandle); timerRunning=false; timerLeft = timerSecs;
+  const d = document.getElementById('timerDisplay');
+  if(d){ d.textContent = fmtTime(timerLeft); d.classList.remove('done'); }
+  renderTopbarBtns();
+}
+function changeMinutes(delta){
+  timerSecs = Math.max(60, Math.min(1800, timerSecs + delta*60));
+  timerLeft = timerSecs;
+  resetTimer();
+}
+function renderTopbarBtns(){
+  const b = document.getElementById('startPauseBtn');
+  if(b) b.textContent = timerRunning ? 'Pause' : 'Start';
+}
+function toggleFullscreen(){
+  if(!document.fullscreenElement){ document.documentElement.requestFullscreen?.(); }
+  else { document.exitFullscreen?.(); }
+}
+function shuffleCurrent(){
+  const arr = SETS[current].items;
+  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  render();
+}
+function goTo(i){ current = ((i % SETS.length)+SETS.length)%SETS.length; clearInterval(timerHandle); timerRunning=false; timerLeft=timerSecs; render(); }
+function goHome(){ current = null; clearInterval(timerHandle); timerRunning=false; render(); }
+function setCat(k){ activeCat = k; render(); }
+
+function render(){
+  const app = document.getElementById('app');
+  if(current === null){
+    app.innerHTML = `
+      <div class="wrap">
+        <div class="home-head">
+          <h1>Story Deck</h1>
+          <p>Seven images. One story. Pick a deck to project for the class.</p>
+        </div>
+        <div class="filter-row">
+          <button class="filter-btn ${activeCat==='all'?'active':''}" onclick="setCat('all')">All decks</button>
+          ${Object.keys(CATS).map(k=>`
+            <button class="filter-btn ${activeCat===k?'active':''}" style="color:${CATS[k].color}" onclick="setCat('${k}')">${CATS[k].label}</button>`).join('')}
+          <button class="filter-btn" onclick="toggleInfo(true)">About these topics</button>
+        </div>
+        <div class="deck-grid">
+          ${SETS.map((s,i)=>({s,i})).filter(x=>activeCat==='all'||x.s.cat===activeCat).map(({s,i})=>`
+            <button class="deck-card" onclick="goTo(${i})">
+              <div class="deck-num">Deck ${i+1}</div>
+              <p class="deck-count">${s.items.length} images</p>
+              <span class="cat-tag" style="background:${CATS[s.cat].color}">${CATS[s.cat].label}</span>
+            </button>`).join('')}
+        </div>
+      </div>
+      ${showInfo ? `
+      <div class="modal-overlay" onclick="if(event.target===this) toggleInfo(false)">
+        <div class="modal-box">
+          <button class="modal-close" onclick="toggleInfo(false)">Close</button>
+          <h2>Why these three topics?</h2>
+          <p class="lead">In Norwegian upper secondary school (videregående skole), the LK20 curriculum identifies three interdisciplinary topics (tverrfaglige temaer) meant to be woven across subjects — not taught as separate subjects of their own. The Norwegian Directorate for Education describes them as areas where students build knowledge and skills for handling important challenges in their own lives and in society.</p>
+
+          <div class="topic-block" style="--c:${CATS.health.color}">
+            <h3>Health and life skills — Folkehelse og livsmestring</h3>
+            <ul>
+              <li>Physical and mental health</li>
+              <li>Relationships and belonging</li>
+              <li>Identity and self-image</li>
+              <li>Sexuality and boundaries</li>
+              <li>Substance use</li>
+              <li>Personal economy</li>
+              <li>Dealing with challenges and making responsible choices</li>
+            </ul>
+          </div>
+
+          <div class="topic-block" style="--c:${CATS.democracy.color}">
+            <h3>Democracy and citizenship — Demokrati og medborgerskap</h3>
+            <ul>
+              <li>Democratic participation</li>
+              <li>Human rights</li>
+              <li>Equality and inclusion</li>
+              <li>Critical thinking and source criticism</li>
+              <li>Political systems and civic participation</li>
+              <li>Freedom of expression</li>
+              <li>Handling disagreement and respecting different perspectives</li>
+            </ul>
+          </div>
+
+          <div class="topic-block" style="--c:${CATS.sustainability.color}">
+            <h3>Sustainable development — Bærekraftig utvikling</h3>
+            <ul>
+              <li>Climate and environmental issues</li>
+              <li>Consumption and resource use</li>
+              <li>Economic and social sustainability</li>
+              <li>Local and global perspectives</li>
+              <li>Conflicts between different interests</li>
+              <li>Understanding how individual and collective choices affect society and the environment</li>
+            </ul>
+          </div>
+
+          <table class="eng-table">
+            <tr><th>Interdisciplinary topic</th><th>Possible English topics</th></tr>
+            <tr><td>Folkehelse og livsmestring</td><td>mental health, social media, digital wellbeing, identity, relationships, stress</td></tr>
+            <tr><td>Demokrati og medborgerskap</td><td>human rights, freedom of speech, misinformation, elections, activism, Indigenous rights</td></tr>
+            <tr><td>Bærekraftig utvikling</td><td>climate change, food production, ethical consumption, fast fashion, biodiversity, sustainable tourism</td></tr>
+          </table>
+
+          <p class="overlap-note">The topics can also overlap: AI and young people's wellbeing touches both folkehelse og livsmestring and demokrati og medborgerskap, while AI's environmental impact connects bærekraftig utvikling with digital literacy.</p>
+        </div>
+      </div>` : ''}`;
+    return;
+  }
+  const s = SETS[current];
+  app.innerHTML = `
+    <div class="topbar">
+      <button class="tbtn" onclick="goHome()">← Decks</button>
+      <span class="deck-label">Deck ${current+1} of ${SETS.length}</span>
+      <span class="cat-tag" style="background:${CATS[s.cat].color}">${CATS[s.cat].label}</span>
+      <button class="tbtn" onclick="goTo(${current-1})">Prev</button>
+      <button class="tbtn" onclick="goTo(${current+1})">Next</button>
+      <button class="tbtn" onclick="shuffleCurrent()">Shuffle</button>
+      <div class="spacer"></div>
+      <div class="timer-box">
+        <button class="tbtn" onclick="changeMinutes(-1)">−1m</button>
+        <span id="timerDisplay" class="timer-display ${timerLeft<=0?'done':''}">${fmtTime(timerLeft)}</span>
+        <button class="tbtn" onclick="changeMinutes(1)">+1m</button>
+        <button class="tbtn primary" id="startPauseBtn" onclick="startPauseTimer()">${timerRunning?'Pause':'Start'}</button>
+        <button class="tbtn" onclick="resetTimer()">Reset</button>
+      </div>
+      <button class="tbtn" onclick="toggleFullscreen()">Fullscreen</button>
+      <button class="tbtn" onclick="toggleTheme()">Theme</button>
+    </div>
+    <div class="stage">
+      <p class="prompt">Look closely at all ${s.items.length} images. Write one story that connects every single one.</p>
+      <div class="img-grid">
+        ${s.items.map(e=>`<div class="img-tile">${e}</div>`).join('')}
+      </div>
+      <div class="nav-row">
+        <button class="tbtn" onclick="goTo(${current-1})">← Previous deck</button>
+        <button class="tbtn" onclick="goTo(${current+1})">Next deck →</button>
+      </div>
+    </div>`;
+}
+
+document.addEventListener('keydown', (e)=>{
+  if(current===null) return;
+  if(e.key==='ArrowRight') goTo(current+1);
+  if(e.key==='ArrowLeft') goTo(current-1);
+  if(e.key==='Escape') goHome();
+});
+
+render();
+</script>
+</body>
+</html>
